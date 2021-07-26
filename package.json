@@ -1,0 +1,23 @@
+{
+  "name": "rcsbusinessmessaging",
+  "version": "1.0.0",
+  "author": "Google Inc.",
+  "engines": {
+    "node": ">=10"
+  },
+  "description": "Client library for Google's RCS Business Messaging API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:google-business-communications/nodejs-rcsbusinessmessaging.git"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "google-auth-library": "^6.0.5",
+    "googleapis": "^45.0.0",
+    "uuid": "^3.3.3"
+  }
+}
