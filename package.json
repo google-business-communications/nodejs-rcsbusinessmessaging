@@ -1,6 +1,6 @@
 {
   "name": "rcsbusinessmessaging",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Google Inc.",
   "engines": {
     "node": ">=10"
@@ -16,8 +16,8 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "google-auth-library": "^6.0.5",
-    "googleapis": "^45.0.0",
+    "google-auth-library": "^7.3.0",
+    "googleapis": "^82.0.0",
     "uuid": "^3.3.3"
   }
 }
