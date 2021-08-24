@@ -141,28 +141,32 @@ export declare namespace rcsbusinessmessaging_v1 {
         sendTime?: string | null;
     }
     /**
-     * Request message for RBMService.BatchGetUsers method.
+     * Request to check if users are RBM-reachable.
      */
     export interface Schema$BatchGetUsersRequest {
+        /**
+         * Optional. The agent&#39;s unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string | null;
         /**
          * List of users&#39; phone numbers in E.164 format.
          */
         users?: string[] | null;
     }
     /**
-     * Response message for RBMService.BatchGetUsers method.
+     * Response with RBM-reachability user data.
      */
     export interface Schema$BatchGetUsersResponse {
         /**
-         * Amount of users&#39; phone numbers from the randomly selected list that are RCS-enabled regardless of the launch status for the agent. The ratio between this value and the total_random_sample_user_count can be used to approximate the potential reach for a list of users.
+         * Count of phone numbers from the randomly selected list that are RCS-reachable across all carriers, regardless of the agent&#39;s launch status. The ratio between this value and total_random_sample_user_count can approximate the potential reach for a list of users.
          */
         reachableRandomSampleUserCount?: number | null;
         /**
-         * List of users&#39; phone numbers that can be reached from the RBM platform. Only users on carriers that the agent is launched on will be returned.
+         * List of users&#39; phone numbers that RBM can reach. Only includes users on carriers that the agent is launched on.
          */
         reachableUsers?: string[] | null;
         /**
-         * Amount of users&#39; phone number randomly selected from the request. Typically this value will be ~75% of the total requested users in the initial BatchGetUsers request. This value will be 0 if the amount of requested users is less than 500.
+         * Count of phone numbers randomly selected from reachable_users. Typically, this value is ~75% of the total requested phone numbers. This value is `0` if the count of requested phone numbers is less than 500.
          */
         totalRandomSampleUserCount?: number | null;
     }
@@ -214,7 +218,7 @@ export declare namespace rcsbusinessmessaging_v1 {
      */
     export interface Schema$ContentInfo {
         /**
-         * Publicly reachable URL of the file. The RBM platform determines the MIME type of the file from the content-type field in the HTTP headers when the platform fetches the file. The content-type field must be present and accurate in the HTTP response from the URL.
+         * Publicly reachable URL of the file. The RBM platform determines the MIME type of the file from the content-type field in the HTTP headers when the platform fetches the file. The content-type field must be present and accurate in the HTTP response from the URL. Recommended maximum file size of 100 MB.
          */
         fileUrl?: string | null;
         /**
@@ -222,7 +226,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          */
         forceRefresh?: boolean | null;
         /**
-         * (Optional, for image and video files only) Publicly reachable URL of the thumbnail. If you don&#39;t provide a thumbnail URL, the RBM platform displays a blank placeholder thumbnail until the user&#39;s device downloads the file. Depending on the user&#39;s setting, the file may not download automatically and may require the user to tap a download button.
+         * (Optional, for image and video files only) Publicly reachable URL of the thumbnail. Maximum size of 100 kB. If you don&#39;t provide a thumbnail URL, the RBM platform displays a blank placeholder thumbnail until the user&#39;s device downloads the file. Depending on the user&#39;s setting, the file may not download automatically and may require the user to tap a download button.
          */
         thumbnailUrl?: string | null;
     }
@@ -650,7 +654,7 @@ export declare namespace rcsbusinessmessaging_v1 {
         objectName?: string | null;
     }
     /**
-     * An object that represents a latitude/longitude pair. This is expressed as a pair of doubles to represent degrees latitude and degrees longitude. Unless specified otherwise, this must conform to the WGS84 standard. Values must be within normalized ranges.
+     * An object that represents a latitude/longitude pair. This is expressed as a pair of doubles to represent degrees latitude and degrees longitude. Unless specified otherwise, this object must conform to the WGS84 standard. Values must be within normalized ranges.
      */
     export interface Schema$LatLng {
         /**
@@ -1129,6 +1133,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *
          *   // Do the magic
          *   const res = await rcsbusinessmessaging.phones.getCapabilities({
+         *     // Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         *     agentId: 'placeholder-value',
          *     // This field resolves to "phones/{E.164}/capabilities", where {E.164} is the user's phone number in E.164 format. For example, for a user with the US phone number +1-222-333-4444, the resulting endpoint is https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/capabilities.
          *     name: 'phones/my-phone',
          *     // The unique ID of the request, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. If the request ID matches an ID that the agent used for a previous request, the RBM platform ignores the new request.
@@ -1151,6 +1157,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          * @memberOf! ()
          *
          * @param {object} params Parameters for request
+         * @param {string=} params.agentId Optional. The agent's unique identifier. Defined by RCS Business Messaging.
          * @param {string} params.name This field resolves to "phones/{E.164}/capabilities", where {E.164} is the user's phone number in E.164 format. For example, for a user with the US phone number +1-222-333-4444, the resulting endpoint is https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/capabilities.
          * @param {string=} params.requestId The unique ID of the request, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. If the request ID matches an ID that the agent used for a previous request, the RBM platform ignores the new request.
          * @param {object} [options] Optionally override request options, such as `url`, `method`, and `encoding`.
@@ -1166,6 +1173,10 @@ export declare namespace rcsbusinessmessaging_v1 {
     }
     export interface Params$Resource$Phones$Getcapabilities extends StandardParameters {
         /**
+         * Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string;
+        /**
          * This field resolves to "phones/{E.164}/capabilities", where {E.164} is the user's phone number in E.164 format. For example, for a user with the US phone number +1-222-333-4444, the resulting endpoint is https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/capabilities.
          */
         name?: string;
@@ -1179,7 +1190,7 @@ export declare namespace rcsbusinessmessaging_v1 {
         constructor(context: APIRequestContext);
         /**
          * rcsbusinessmessaging.phones.agentEvents.create
-         * @desc Sends an event from the agent to a user. Agent events can be used to indicate that the agent has read a message from the user or that the agent is in the process of typing (which adds a human element to the RBM experience). Unlike agent messages, agent events cannot be revoked after sending.
+         * @desc Sends an event from the agent to a user. Agent events can be used to indicate that the agent has read a message from the user or that the agent is in the process of typing (which adds a human element to the RBM experience). If RBM can't reach the user, the RBM platform returns `404 NOT_FOUND`. Unlike agent messages, agent events cannot be revoked after sending.
          * @example
          * // Before running the sample:
          * // - Enable the API at:
@@ -1204,6 +1215,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *
          *   // Do the magic
          *   const res = await rcsbusinessmessaging.phones.agentEvents.create({
+         *     // Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         *     agentId: 'placeholder-value',
          *     // The ID of the event, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. The RBM platform ignores any agent message sent with an ID that was used by an earlier message or event sent from the same agent.
          *     eventId: 'placeholder-value',
          *     // "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, for a user with the US phone number +1-222-333-4444, the value would be phones/+12223334444, and the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentEvents.
@@ -1240,6 +1253,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          * @memberOf! ()
          *
          * @param {object} params Parameters for request
+         * @param {string=} params.agentId Optional. The agent's unique identifier. Defined by RCS Business Messaging.
          * @param {string=} params.eventId The ID of the event, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. The RBM platform ignores any agent message sent with an ID that was used by an earlier message or event sent from the same agent.
          * @param {string} params.parent "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, for a user with the US phone number +1-222-333-4444, the value would be phones/+12223334444, and the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentEvents.
          * @param {().AgentEvent} params.requestBody Request body data
@@ -1255,6 +1269,10 @@ export declare namespace rcsbusinessmessaging_v1 {
         create(callback: BodyResponseCallback<Schema$AgentEvent>): void;
     }
     export interface Params$Resource$Phones$Agentevents$Create extends StandardParameters {
+        /**
+         * Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string;
         /**
          * The ID of the event, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. The RBM platform ignores any agent message sent with an ID that was used by an earlier message or event sent from the same agent.
          */
@@ -1298,6 +1316,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *
          *   // Do the magic
          *   const res = await rcsbusinessmessaging.phones.agentMessages.create({
+         *     // Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         *     agentId: 'placeholder-value',
          *     // The unique ID of the message, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. The RBM platform ignores any agent message sent with an ID that was used by an earlier message or event sent from the same agent.
          *     messageId: 'placeholder-value',
          *     // "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, with the US phone number +1-222-333-4444, the value would be phones/+12223334444, and the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentMessages.
@@ -1332,6 +1352,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          * @memberOf! ()
          *
          * @param {object} params Parameters for request
+         * @param {string=} params.agentId Optional. The agent's unique identifier. Defined by RCS Business Messaging.
          * @param {string=} params.messageId The unique ID of the message, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. The RBM platform ignores any agent message sent with an ID that was used by an earlier message or event sent from the same agent.
          * @param {string} params.parent "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, with the US phone number +1-222-333-4444, the value would be phones/+12223334444, and the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentMessages.
          * @param {().AgentMessage} params.requestBody Request body data
@@ -1372,6 +1393,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *
          *   // Do the magic
          *   const res = await rcsbusinessmessaging.phones.agentMessages.delete({
+         *     // Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         *     agentId: 'placeholder-value',
          *     // "phones/{E.164}/agentMessages/{messageId}", where {E.164} is the user's phone number in E.164 format and {messageId} is the agent-assigned ID of the agent message that should be revoked. For example, with the US phone number +1-222-333-4444 and an agent message with the ID "12345xyz", the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentMessages/12345xyz.
          *     name: 'phones/my-phone/agentMessages/my-agentMessage',
          *   });
@@ -1390,6 +1413,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          * @memberOf! ()
          *
          * @param {object} params Parameters for request
+         * @param {string=} params.agentId Optional. The agent's unique identifier. Defined by RCS Business Messaging.
          * @param {string} params.name "phones/{E.164}/agentMessages/{messageId}", where {E.164} is the user's phone number in E.164 format and {messageId} is the agent-assigned ID of the agent message that should be revoked. For example, with the US phone number +1-222-333-4444 and an agent message with the ID "12345xyz", the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentMessages/12345xyz.
          * @param {object} [options] Optionally override request options, such as `url`, `method`, and `encoding`.
          * @param {callback} callback The callback that handles the response.
@@ -1404,6 +1428,10 @@ export declare namespace rcsbusinessmessaging_v1 {
     }
     export interface Params$Resource$Phones$Agentmessages$Create extends StandardParameters {
         /**
+         * Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string;
+        /**
          * The unique ID of the message, assigned by the agent. This must be a UUID, as defined in https://tools.ietf.org/html/rfc4122. The RBM platform ignores any agent message sent with an ID that was used by an earlier message or event sent from the same agent.
          */
         messageId?: string;
@@ -1417,6 +1445,10 @@ export declare namespace rcsbusinessmessaging_v1 {
         requestBody?: Schema$AgentMessage;
     }
     export interface Params$Resource$Phones$Agentmessages$Delete extends StandardParameters {
+        /**
+         * Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string;
         /**
          * "phones/{E.164}/agentMessages/{messageId}", where {E.164} is the user's phone number in E.164 format and {messageId} is the agent-assigned ID of the agent message that should be revoked. For example, with the US phone number +1-222-333-4444 and an agent message with the ID "12345xyz", the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/agentMessages/12345xyz.
          */
@@ -1533,6 +1565,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *
          *   // Do the magic
          *   const res = await rcsbusinessmessaging.phones.dialogflowMessages.create({
+         *     // Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         *     agentId: 'placeholder-value',
          *     // A unique prefix of RBM message IDs that result from the Dialogflow event. Dialogflow supports multiple responses for a given event. If an event triggers multiple responses, RBM forwards each response as a separate message. Each message ID shares the same prefix.
          *     messageIdPrefix: 'placeholder-value',
          *     // "phones/{E.164}", where {E.164} is the user's phone number
@@ -1569,6 +1603,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          * @memberOf! ()
          *
          * @param {object} params Parameters for request
+         * @param {string=} params.agentId Optional. The agent's unique identifier. Defined by RCS Business Messaging.
          * @param {string=} params.messageIdPrefix A unique prefix of RBM message IDs that result from the Dialogflow event. Dialogflow supports multiple responses for a given event. If an event triggers multiple responses, RBM forwards each response as a separate message. Each message ID shares the same prefix.
          * @param {string} params.parent "phones/{E.164}", where {E.164} is the user's phone number
          * @param {().DialogflowEvent} params.requestBody Request body data
@@ -1584,6 +1619,10 @@ export declare namespace rcsbusinessmessaging_v1 {
         create(callback: BodyResponseCallback<Schema$DialogflowEvent>): void;
     }
     export interface Params$Resource$Phones$Dialogflowmessages$Create extends StandardParameters {
+        /**
+         * Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string;
         /**
          * A unique prefix of RBM message IDs that result from the Dialogflow event. Dialogflow supports multiple responses for a given event. If an event triggers multiple responses, RBM forwards each response as a separate message. Each message ID shares the same prefix.
          */
@@ -1627,6 +1666,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *
          *   // Do the magic
          *   const res = await rcsbusinessmessaging.phones.testers.create({
+         *     // Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         *     agentId: 'placeholder-value',
          *     // "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, with the US phone number +1-222-333-4444, the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/testers/.
          *     parent: 'phones/my-phone',
          *
@@ -1657,6 +1698,7 @@ export declare namespace rcsbusinessmessaging_v1 {
          * @memberOf! ()
          *
          * @param {object} params Parameters for request
+         * @param {string=} params.agentId Optional. The agent's unique identifier. Defined by RCS Business Messaging.
          * @param {string} params.parent "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, with the US phone number +1-222-333-4444, the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/testers/.
          * @param {().Tester} params.requestBody Request body data
          * @param {object} [options] Optionally override request options, such as `url`, `method`, and `encoding`.
@@ -1672,6 +1714,10 @@ export declare namespace rcsbusinessmessaging_v1 {
     }
     export interface Params$Resource$Phones$Testers$Create extends StandardParameters {
         /**
+         * Optional. The agent's unique identifier. Defined by RCS Business Messaging.
+         */
+        agentId?: string;
+        /**
          * "phones/{E.164}", where {E.164} is the user's phone number in E.164 format. For example, with the US phone number +1-222-333-4444, the resulting endpoint would be https://rcsbusinessmessaging.googleapis.com/v1/phones/+12223334444/testers/.
          */
         parent?: string;
@@ -1685,7 +1731,7 @@ export declare namespace rcsbusinessmessaging_v1 {
         constructor(context: APIRequestContext);
         /**
          * rcsbusinessmessaging.users.batchGet
-         * @desc Gets the RCS-enabled phone numbers for a list of users. The returned payload contains a list of RCS-enabled phone numbers reachable by the RBM platform for the specified users. Only phone numbers that are RCS-enabled for a carrier the agent is launched on will be returned. The returned payload also contains values that can be used to estimate the potential reach of a list of phone numbers regardless of the launch status of the agent.
+         * @desc Gets the RCS-enabled phone numbers for a list of users. The returned payload contains a list of RCS-enabled phone numbers reachable by the RBM platform for the specified users. Only phone numbers that are RCS-enabled for a carrier the agent is launched on will be returned. The returned payload also contains values that can be used to estimate the potential reach of a list of phone numbers regardless of the launch status of the agent. Maximum 600 queries per minute (QPM).
          * @example
          * // Before running the sample:
          * // - Enable the API at:
@@ -1714,7 +1760,8 @@ export declare namespace rcsbusinessmessaging_v1 {
          *     requestBody: {
          *       // request body parameters
          *       // {
-         *       //   "users": []
+         *       //   "users": [],
+         *       //   "agentId": "my_agentId"
          *       // }
          *     },
          *   });
